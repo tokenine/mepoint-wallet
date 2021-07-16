@@ -13,7 +13,6 @@
 <script>
 import loading from "./components/loading.vue";
 import alert from "./components/alert.vue";
-import { firebaseAuth } from "./plugins/firebase";
 export default {
   name: "App",
   computed: {

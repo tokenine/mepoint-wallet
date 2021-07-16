@@ -243,7 +243,7 @@ export default {
           password
         );
         if (signIn.user.uid) {
-          this.$emit("verifyPin", true);
+          this.$emit("verifyPin", { status: true, password: password });
         }
         this.app_loading(false);
       } catch (err) {
