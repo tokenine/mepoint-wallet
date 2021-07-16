@@ -20,14 +20,6 @@ const routes = [
     },
   },
   {
-    path: "/OTP/phoneVerify",
-    name: "PhoneVerify",
-    component: () => import("../views/OTP/phoneVerify.vue"),
-    meta: {
-      middleware: [isSplash, guest],
-    },
-  },
-  {
     path: "/OTP/emailVerify",
     name: "EmailVerify",
     component: () => import("../views/OTP/emailVerify.vue"),
