@@ -5,20 +5,40 @@
         {{ $store.state.auth.me.email }}
       </div>
       <v-spacer></v-spacer>
-      <div class="text-center" @click="logout">
-        <v-icon medium color="white"> logout </v-icon>
-        <div style="color: white; font-size: 11px; text-transform: uppercase">
-          ออกจากระบบ
-        </div>
-      </div>
+      <v-menu bottom offset-x offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn dark icon v-bind="attrs" v-on="on">
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item>
+            <v-list-item-title @click="exportKey">
+              <v-icon medium> outbox </v-icon>
+              <span class="pl-2" style="font-size: 11px; text-transform: uppercase">export privateKey</span>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title @click="logout">
+              <v-icon medium> logout </v-icon>
+              <span class="pl-2" style="font-size: 11px; text-transform: uppercase">ออกจากระบบ</span>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
   </div>
 </template>
 
 <script>
-import {firebaseAuth} from "../plugins/firebase"
+import { firebaseAuth } from "../plugins/firebase";
+import pinPad from '../components/pinPad.vue';
 export default {
   name: "HomeAppBar",
+  components: {
+    'pin-pad': pinPad
+  },
   methods: {
     logout() {
       const vm = this;
@@ -37,6 +57,7 @@ export default {
                 await vm.$store.commit("SET_ME", null);
                 await vm.$store.commit("SET_TOKENLIST", []);
                 localStorage.removeItem("email_account_mpv");
+                localStorage.removeItem("encypt_string_mpv");
                 await vm.$router.push("/OTP/termService");
               })
               .catch((error) => {
@@ -50,6 +71,9 @@ export default {
         }
       });
     },
+    exportKey() {
+      this.$emit("exportKey");
+    }
   },
 };
 </script>
