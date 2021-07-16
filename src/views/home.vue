@@ -37,7 +37,7 @@
               type="text"
               class="input-pvkey"
               ref="privatekey"
-              :value="$store.state.auth.me.privateKey"
+              :value="privateKey"
               @click="Copy"
             />
           </v-col>
@@ -87,6 +87,9 @@ export default {
     tokenList() {
       return this.$store.state.auth.tokenList;
     },
+    privateKey() {
+      return this.$store.state.auth.me.privateKey;
+    },
   },
   methods: {
     Copy() {
@@ -102,7 +105,14 @@ export default {
     async exportKey(verify) {
       try {
         this.showPin = false;
-        if (verify) {
+        if (verify.status) {
+          const uid = await this.$store.state.auth.me.uid;
+          await this.app_loading(true);
+          await this.$store.dispatch("getUser", {
+            uid: uid,
+            password: verify.password,
+          });
+          await this.app_loading(false);
           this.dialog = true;
         }
       } catch (err) {

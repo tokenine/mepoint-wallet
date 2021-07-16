@@ -9,16 +9,39 @@
 </template>
 
 <script>
+import { firebaseAuth } from "../plugins/firebase";
 export default {
   name: "SplashScreen",
   mounted() {
     this.$nextTick(() => {
-      setTimeout(() => {
+      setTimeout(async () => {
         this.$store.commit("SET_SPLASH", false);
-        if (localStorage.getItem("email_account_mpv") == null) {
+        const email = localStorage.getItem("email_account_mpv");
+        const encypt_string = localStorage.getItem("encypt_string_mpv");
+        if (email == null) {
           this.$router.push("/OTP/termService");
         } else {
-          this.$router.push("/login");
+          const user = firebaseAuth.currentUser;
+          if (user) {
+            if(encypt_string == null) {
+              return this.$router.push("/login");
+            }
+            let wallet = JSON.parse(encypt_string);
+            await this.$store.commit("SET_ME", {
+              email: email,
+              uid: user.uid,
+              ethereumAddress: wallet.address,
+              privateKey: wallet.privateKey,
+            });
+            this.app_loading(true);
+            await this.$store.dispatch("getBalance");
+            console.log("getted balance");
+            await this.$store.commit("SET_LOGGEDIN", true);
+            this.app_loading(false);
+            this.$router.push("/");
+          } else {
+            this.$router.push("/login");
+          }
         }
       }, 1500);
     });

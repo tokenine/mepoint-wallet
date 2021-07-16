@@ -54,7 +54,7 @@ export default {
             email: email,
             uid: signIn.user.uid,
             ethereumAddress: wallet.address,
-            privateKey: wallet.privateKey,
+            privateKey: null,
           });
         }
         await this.$store.dispatch("getBalance");

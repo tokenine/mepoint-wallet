@@ -162,7 +162,7 @@ export default {
   },
   methods: {
     async sendToken(verify) {
-      if (verify) {
+      if (verify.status) {
         this.showPin = false;
         try {
           const provider = await new this.$ethers.providers.JsonRpcProvider(
