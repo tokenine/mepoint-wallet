@@ -19,7 +19,12 @@
                   </div>
                   <v-spacer></v-spacer>
                   <div>
-                    <v-img :src="tokenByName.logoURI" height="30px" width="30px" contain></v-img>
+                    <v-img
+                      :src="tokenByName.logoURI"
+                      height="30px"
+                      width="30px"
+                      contain
+                    ></v-img>
                   </div>
                 </v-toolbar>
                 <div class="pa-4 mt-4">
@@ -165,6 +170,11 @@ export default {
       if (verify.status) {
         this.showPin = false;
         try {
+          await this.app_loading(true);
+          await this.$store.dispatch("getUser", {
+            uid: this.$store.state.auth.me.uid,
+            password: verify.password,
+          });
           const provider = await new this.$ethers.providers.JsonRpcProvider(
             "https://rpc.tbwg.io"
           );
