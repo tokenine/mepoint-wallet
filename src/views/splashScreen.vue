@@ -18,20 +18,21 @@ export default {
         this.$store.commit("SET_SPLASH", false);
         const email = localStorage.getItem("email_account_mpv");
         const encypt_string = localStorage.getItem("encypt_string_mpv");
+        const wallet_address = localStorage.getItem("wallet_mpv");
         if (email == null) {
           this.$router.push("/OTP/termService");
         } else {
           const user = firebaseAuth.currentUser;
           if (user) {
-            if(encypt_string == null) {
+            if(encypt_string == null || wallet_address == null) {
               return this.$router.push("/login");
             }
-            let wallet = JSON.parse(encypt_string);
+            let wallet = JSON.parse(wallet_address);
             await this.$store.commit("SET_ME", {
               email: email,
               uid: user.uid,
               ethereumAddress: wallet.address,
-              privateKey: wallet.privateKey,
+              privateKey: null,
             });
             this.app_loading(true);
             await this.$store.dispatch("getBalance");

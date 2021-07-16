@@ -54,6 +54,9 @@ export default {
     SET_TOKENLIST(state, data) {
       state.tokenList = data;
     },
+    SET_PRIVATE_KEY(state, data) {
+      state.me.privateKey = data;
+    },
   },
   actions: {
     async getUser({ commit }, data) {
@@ -65,7 +68,8 @@ export default {
         me.wallet,
         data.password
       );
-      localStorage.setItem("encypt_string_mpv", JSON.stringify(wallet));
+      localStorage.setItem("encypt_string_mpv", me.wallet);
+      localStorage.setItem("wallet_mpv", JSON.stringify(wallet));
       await commit("SET_ME", {
         email: me.email,
         uid: me.uid,

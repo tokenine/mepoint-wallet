@@ -171,15 +171,16 @@ export default {
         this.showPin = false;
         try {
           await this.app_loading(true);
-          await this.$store.dispatch("getUser", {
-            uid: this.$store.state.auth.me.uid,
-            password: verify.password,
-          });
+          let wallet = await this.$ethers.Wallet.fromEncryptedJson(
+            localStorage.getItem("encypt_string_mpv"),
+            verify.password
+          );
+          let privateKey = await wallet.privateKey;
           const provider = await new this.$ethers.providers.JsonRpcProvider(
             "https://rpc.tbwg.io"
           );
           const walletSigner = await new this.$ethers.Wallet(
-            this.$store.state.auth.me.privateKey,
+            privateKey,
             provider
           );
           let amount = await this.$ethers.utils.parseUnits(

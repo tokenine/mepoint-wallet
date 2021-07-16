@@ -81,14 +81,12 @@ export default {
         readyLabel: "",
         loadingLabel: "",
       },
+      privateKey: null
     };
   },
   computed: {
     tokenList() {
       return this.$store.state.auth.tokenList;
-    },
-    privateKey() {
-      return this.$store.state.auth.me.privateKey;
     },
   },
   methods: {
@@ -104,15 +102,15 @@ export default {
     },
     async exportKey(verify) {
       try {
-        this.showPin = false;
         if (verify.status) {
-          const uid = await this.$store.state.auth.me.uid;
+          this.showPin = false;
           await this.app_loading(true);
-          await this.$store.dispatch("getUser", {
-            uid: uid,
-            password: verify.password,
-          });
-          await this.app_loading(false);
+          let wallet = await this.$ethers.Wallet.fromEncryptedJson(
+            localStorage.getItem("encypt_string_mpv"),
+            verify.password
+          );
+          this.privateKey = await wallet.privateKey;
+          this.app_loading(false);
           this.dialog = true;
         }
       } catch (err) {

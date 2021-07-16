@@ -33,30 +33,15 @@ export default {
       this.app_loading(true);
       try {
         const email = localStorage.getItem("email_account_mpv");
-        const encypt_string = localStorage.getItem("encypt_string_mpv");
         const password = pin;
         let signIn = await firebaseAuth.signInWithEmailAndPassword(
           email,
           password
         );
-        if (encypt_string == null) {
-          await this.$store.dispatch("getUser", {
-            uid: signIn.user.uid,
-            password: password,
-          });
-          console.log("getted user");
-        } else {
-          let wallet = await this.$ethers.Wallet.fromEncryptedJson(
-            encypt_string,
-            password
-          );
-          await this.$store.commit("SET_ME", {
-            email: email,
-            uid: signIn.user.uid,
-            ethereumAddress: wallet.address,
-            privateKey: null,
-          });
-        }
+        await this.$store.dispatch("getUser", {
+          uid: signIn.user.uid,
+          password: password,
+        });
         await this.$store.dispatch("getBalance");
         console.log("getted balance");
         await this.$store.commit("SET_LOGGEDIN", true);
