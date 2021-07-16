@@ -65,6 +65,7 @@ export default {
         me.wallet,
         data.password
       );
+      localStorage.setItem("encypt_string_mpv", me.wallet);
       await commit("SET_ME", {
         email: me.email,
         uid: me.uid,

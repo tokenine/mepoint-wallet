@@ -228,6 +228,7 @@ export default {
           uid: uid,
           wallet: encyptString,
         });
+
       } catch (err) {
         throw err;
       }
