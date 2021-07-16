@@ -20,9 +20,7 @@
             <div class="px-3">หมายเลข OTP</div>
             <div class="input-all px-3 mt-2">
               <input
-                type="text"
-                pattern="\d*"
-                maxlength="1"
+                type="number"
                 ref="input1"
                 id="1"
                 v-model="otp.pos1"
@@ -30,9 +28,7 @@
                 @keyup.stop="keyup"
               />
               <input
-                type="text"
-                pattern="\d*"
-                maxlength="1"
+                type="number"
                 id="2"
                 v-model="otp.pos2"
                 @keypress="isNumber()"
@@ -40,9 +36,7 @@
                 readonly
               />
               <input
-                type="text"
-                pattern="\d*"
-                maxlength="1"
+                type="number"
                 id="3"
                 v-model="otp.pos3"
                 @keypress="isNumber()"
@@ -50,9 +44,7 @@
                 readonly
               />
               <input
-                type="text"
-                pattern="\d*"
-                maxlength="1"
+                type="number"
                 id="4"
                 v-model="otp.pos4"
                 @keypress="isNumber()"
@@ -60,9 +52,7 @@
                 readonly
               />
               <input
-                type="text"
-                pattern="\d*"
-                maxlength="1"
+                type="number"
                 id="5"
                 v-model="otp.pos5"
                 @keypress="isNumber()"
@@ -70,9 +60,7 @@
                 readonly
               />
               <input
-                type="text"
-                pattern="\d*"
-                maxlength="1"
+                type="number"
                 id="6"
                 v-model="otp.pos6"
                 @keypress="isNumber()"
@@ -335,7 +323,7 @@ export default {
           backInput = element;
         }
       });
-      if (e.code == "Backspace") {
+      if (e.key == "Backspace") {
         if (inputIndex > 0) {
           backInput.removeAttribute("readonly");
           nowInput.setAttribute("readonly", "readonly");
@@ -449,21 +437,21 @@ export default {
 
     div:nth-child(2) {
       font-size: 16px;
-      color: #c71e2b;
+      color: #ef4136;
       font-weight: 600;
     }
   }
 
   .text-again {
     font-size: 14px;
-    color: #c71e2b;
+    color: #ef4136;
     display: flex !important;
     align-items: center;
   }
 
   .cicle {
     border-radius: 50%;
-    background-color: #c71e2b;
+    background-color: #ef4136;
     height: 21px;
     width: 21px;
     padding: 1px;
