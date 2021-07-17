@@ -11,14 +11,32 @@ export default {
       type: "success",
       ttile: "",
     },
+    alert_toast: {
+      status: false,
+      tokenName: "",
+      tokenSymbol: "",
+      amount: 0,
+    },
     alert_resolve: null,
     alert_reject: null,
     system_wallet: "0x40c85fe4F0E390A62fdAfccc253bcd84ddb01549",
   },
   getters: {
     system_wallet: (state) => state.system_wallet,
+    alert_toast: (state) => state.alert_toast,
   },
   mutations: {
+    SET_ALERT_TOAST(state, data) {
+      state.alert_toast = data;
+    },
+    SET_CLOSE_TOAST(state) {
+      state.alert_toast = {
+        status: false,
+        tokenName: "",
+        tokenSymbol: "",
+        amount: 0,
+      };
+    },
     SET_LOGGEDIN(state, data) {
       state.loggedIn = data;
     },
