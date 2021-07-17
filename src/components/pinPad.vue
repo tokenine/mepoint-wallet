@@ -243,9 +243,9 @@ export default {
           password
         );
         if (signIn.user.uid) {
+          this.app_loading(false);
           this.$emit("verifyPin", { status: true, password: password });
         }
-        this.app_loading(false);
       } catch (err) {
         this.app_loading(false);
         this.clear = !this.clear;

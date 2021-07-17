@@ -11,7 +11,10 @@ import "material-design-icons-iconfont";
 import "./assets/scss/main.scss";
 import { ethers, Signer } from "ethers";
 import abi from "./assets/static/abi.json";
+import VueCookies from 'vue-cookies';
 
+
+Vue.use(VueCookies)
 Vue.prototype.$axios = axios
 Vue.prototype.$ethers = ethers;
 Vue.prototype.$abi = abi;

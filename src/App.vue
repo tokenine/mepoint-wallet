@@ -18,7 +18,7 @@ export default {
   computed: {
     loadingState() {
       return this.$store.state.app.loading;
-    },
+    }
   },
   components: {
     loading: loading,
@@ -27,6 +27,6 @@ export default {
   beforeMount() {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
-  }
+  },
 };
 </script>

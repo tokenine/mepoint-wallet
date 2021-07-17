@@ -81,14 +81,14 @@ export default {
         readyLabel: "",
         loadingLabel: "",
       },
+      privateKey: null,
+      wsProvider: null,
+      contract: [],
     };
   },
   computed: {
     tokenList() {
       return this.$store.state.auth.tokenList;
-    },
-    privateKey() {
-      return this.$store.state.auth.me.privateKey;
     },
   },
   methods: {
@@ -104,15 +104,15 @@ export default {
     },
     async exportKey(verify) {
       try {
-        this.showPin = false;
         if (verify.status) {
-          const uid = await this.$store.state.auth.me.uid;
+          this.showPin = false;
           await this.app_loading(true);
-          await this.$store.dispatch("getUser", {
-            uid: uid,
-            password: verify.password,
-          });
-          await this.app_loading(false);
+          let wallet = await this.$ethers.Wallet.fromEncryptedJson(
+            localStorage.getItem("encypt_string_mpv"),
+            verify.password
+          );
+          this.privateKey = await wallet.privateKey;
+          this.app_loading(false);
           this.dialog = true;
         }
       } catch (err) {
@@ -126,7 +126,63 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.showPage = true;
+      const vm = this;
+      var init = function () {
+        vm.wsProvider = new vm.$ethers.providers.WebSocketProvider(
+          "wss://ws.xchain.asia"
+        );
+
+        vm.wsProvider.on("pending", (tx) => {
+          vm.wsProvider.once(tx, (transaction) => {
+            console.log(transaction);
+            if (
+              String(transaction.to).toLowerCase() == String(vm.ethereumAddress).toLowerCase() ||
+              String(transaction.from).toLowerCase() == String(vm.ethereumAddress).toLowerCase()
+            ) {
+              vm.$store.dispatch("getHistory");
+              vm.$store.dispatch("getBalance");
+            }
+          });
+        });
+
+        let tokenList = vm.tokenList.filter((q) => q.address != "mainnet");
+        for (let i in tokenList) {
+          if (tokenList[i].address != "mainnet") {
+            vm.contract[i] = new vm.$ethers.Contract(
+              tokenList[i].address,
+              vm.$abi,
+              vm.wsProvider
+            );
+            vm.contract[i].on("*", (res) => {
+              console.log("token: ", tokenList[i].symbol);
+              console.log("res: ", res);
+              vm.$store.dispatch("getHistory");
+              vm.$store.dispatch("getBalance");
+            });
+          }
+        }
+
+        // vm.wsProvider.on("block", (blockNumber) => {
+        //   console.log(blockNumber);
+        // });
+
+        vm.wsProvider.on("error", async () => {
+          console.log(`Unable to connect to ${ep.subdomain} retrying in 3s...`);
+          setTimeout(init, 3000);
+        });
+        vm.wsProvider.on("close", async (code) => {
+          console.log(
+            `Connection lost with code ${code}! Attempting reconnect in 3s...`
+          );
+          vm.wsProvider.terminate();
+          setTimeout(init, 3000);
+        });
+      };
+      init();
     });
+  },
+  beforeDestroy() {
+    this.wsProvider.off();
   },
 };
 </script>
