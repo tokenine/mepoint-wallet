@@ -229,6 +229,7 @@ export default {
               throw err;
             }
           }
+          this.writeCookies(verify.password);
         } catch (err) {
           console.log(err);
           this.transferError();
@@ -237,10 +238,30 @@ export default {
     },
     async validate() {
       let valid = await this.$refs.form.validate();
+      let pin = this.$cookies.get("pin_mpv");
       if (valid) {
-        this.showPin = true;
-        // await this.sendToken();
+        if (pin == null) {
+          this.showPin = true;
+        } else {
+          const vm = this;
+          this.alert_show({
+            type: "confirm",
+            header: "กรุณายืนยัน",
+            title: "ท่านต้องการที่จะทำรายการใช่หรือไหม ?",
+          }).then((res) => {
+            if (res) {
+              let verify = {
+                status: true,
+                password: pin,
+              };
+              vm.sendToken(verify);
+            }
+          });
+        }
       }
+    },
+    async writeCookies(pin) {
+      this.$cookies.set("pin_mpv", pin, "15min");
     },
     async transferSuccess() {
       await this.$store.dispatch("getHistory");

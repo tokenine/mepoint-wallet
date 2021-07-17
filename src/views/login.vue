@@ -73,6 +73,7 @@ export default {
                 await vm.$store.commit("SET_LOGGEDIN", false);
                 await vm.$store.commit("SET_ME", null);
                 await vm.$store.commit("SET_TOKENLIST", []);
+                vm.$cookies.keys().forEach(cookie => vm.$cookies.remove(cookie));
                 localStorage.removeItem("email_account_mpv");
                 localStorage.removeItem("encypt_string_mpv");
                 await vm.$router.push("/OTP/termService");

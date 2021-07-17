@@ -17,6 +17,7 @@
     "moment-timezone": "^0.5.33",
     "vue": "^2.6.11",
     "vue-clipboard2": "^0.3.1",
+    "vue-cookies": "^1.7.4",
     "vue-pull-refresh": "^0.2.7",
     "vue-qrcode-reader": "^3.0.3",
     "vue-router": "^3.2.0",

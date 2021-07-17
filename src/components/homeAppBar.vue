@@ -2,7 +2,7 @@
   <div class="bar-me">
     <v-app-bar color="#c71e2b" max-width="500px" flat height="64px">
       <div class="white--text pl-3">
-        {{ $store.state.auth.me.email }}
+        {{ $store.state.auth.me.email || "" }}
       </div>
       <v-spacer></v-spacer>
       <v-menu bottom offset-x offset-y>
@@ -56,6 +56,7 @@ export default {
                 await vm.$store.commit("SET_LOGGEDIN", false);
                 await vm.$store.commit("SET_ME", null);
                 await vm.$store.commit("SET_TOKENLIST", []);
+                vm.$cookies.keys().forEach(cookie => vm.$cookies.remove(cookie));
                 localStorage.removeItem("email_account_mpv");
                 localStorage.removeItem("encypt_string_mpv");
                 await vm.$router.push("/OTP/termService");
