@@ -132,15 +132,31 @@ export default {
           "wss://ws.xchain.asia"
         );
 
-        vm.wsProvider.on("pending", (tx) => {
-          vm.wsProvider.once(tx, (transaction) => {
+        vm.wsProvider.on("pending", async (tx) => {
+          let getTx = await vm.wsProvider.getTransaction(tx);
+          await vm.wsProvider.once(tx, async (transaction) => {
             console.log(transaction);
             if (
-              String(transaction.to).toLowerCase() == String(vm.ethereumAddress).toLowerCase() ||
-              String(transaction.from).toLowerCase() == String(vm.ethereumAddress).toLowerCase()
+              String(transaction.to).toLowerCase() ==
+                String(vm.ethereumAddress).toLowerCase() ||
+              String(transaction.from).toLowerCase() ==
+                String(vm.ethereumAddress).toLowerCase()
             ) {
-              vm.$store.dispatch("getHistory");
-              vm.$store.dispatch("getBalance");
+              await vm.$store.dispatch("getHistory");
+              await vm.$store.dispatch("getBalance");
+
+              if (
+                String(transaction.to).toLowerCase() ==
+                String(vm.ethereumAddress).toLowerCase()
+              ) {
+                let amount = await getTx.value.toString();
+                await vm.$store.commit("SET_ALERT_TOAST", {
+                  status: true,
+                  tokenName: "XTH",
+                  tokenSymbol: "XTH",
+                  amount: amount,
+                });
+              }
             }
           });
         });
@@ -153,18 +169,28 @@ export default {
               vm.$abi,
               vm.wsProvider
             );
-            vm.contract[i].on("*", (res) => {
+            vm.contract[i].on("*", async (res) => {
               console.log("token: ", tokenList[i].symbol);
               console.log("res: ", res);
-              vm.$store.dispatch("getHistory");
-              vm.$store.dispatch("getBalance");
+              let to = await res.args.to;
+              let amount = await res.args.tokens.toString();
+              await vm.$store.dispatch("getHistory");
+              await vm.$store.dispatch("getBalance");
+              if (
+                res.event == "Transfer" &&
+                String(to).toLowerCase() ==
+                  String(vm.ethereumAddress).toLowerCase()
+              ) {
+                await vm.$store.commit("SET_ALERT_TOAST", {
+                  status: true,
+                  tokenName: tokenList[i].name,
+                  tokenSymbol: tokenList[i].symbol,
+                  amount: amount,
+                });
+              }
             });
           }
         }
-
-        // vm.wsProvider.on("block", (blockNumber) => {
-        //   console.log(blockNumber);
-        // });
 
         vm.wsProvider.on("error", async () => {
           console.log(`Unable to connect to ${ep.subdomain} retrying in 3s...`);
