@@ -155,6 +155,8 @@ export default {
         text: null,
       },
       transferInstance: null,
+      wsProvider: null,
+      contract: null,
     };
   },
   computed: {
@@ -264,8 +266,8 @@ export default {
       this.$cookies.set("pin_mpv", pin, "15min");
     },
     async transferSuccess() {
-      await this.$store.dispatch("getHistory");
-      await this.$store.dispatch("getBalance");
+      // await this.$store.dispatch("getHistory");
+      // await this.$store.dispatch("getBalance");
       await this.app_loading(false);
       this.reset();
       await this.alert_show({
@@ -291,12 +293,69 @@ export default {
     if (this.$route.query.to != null) {
       this.form.to = this.$route.query.to;
     }
+    this.$nextTick(() => {
+      const vm = this;
+      var init = function () {
+        vm.wsProvider = new vm.$ethers.providers.WebSocketProvider(
+          "wss://ws.xchain.asia"
+        );
+
+        if (vm.tokenByName.address != "mainnet") {
+          vm.contract = new vm.$ethers.Contract(
+            vm.tokenByName.address,
+            vm.$abi,
+            vm.wsProvider
+          );
+          vm.contract.on("*", (res) => {
+            console.log("token: ", vm.tokenByName.symbol);
+            console.log("res: ", res);
+            vm.$store.dispatch("getHistory");
+            vm.$store.dispatch("getBalance");
+          });
+        } else {
+          vm.wsProvider.on("pending", (tx) => {
+            vm.wsProvider.once(tx, (transaction) => {
+              console.log(transaction);
+              if (
+                String(transaction.to).toLowerCase() ==
+                  String(vm.ethereumAddress).toLowerCase() ||
+                String(transaction.from).toLowerCase() ==
+                  String(vm.ethereumAddress).toLowerCase()
+              ) {
+                vm.$store.dispatch("getHistory");
+                vm.$store.dispatch("getBalance");
+              }
+            });
+          });
+        }
+
+        // vm.wsProvider.on("block", (blockNumber) => {
+        //   console.log(blockNumber);
+        // });
+
+        vm.wsProvider.on("error", async () => {
+          console.log(`Unable to connect to ${ep.subdomain} retrying in 3s...`);
+          setTimeout(init, 3000);
+        });
+        vm.wsProvider.on("close", async (code) => {
+          console.log(
+            `Connection lost with code ${code}! Attempting reconnect in 3s...`
+          );
+          vm.wsProvider.terminate();
+          setTimeout(init, 3000);
+        });
+      };
+      init();
+    });
   },
   async created() {
     this.app_loading(true);
     await this.$store.dispatch("getHistory");
     this.app_loading(false);
     this.showPage = true;
+  },
+  beforeDestroy() {
+    this.wsProvider.off();
   },
 };
 </script>

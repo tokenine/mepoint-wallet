@@ -2,10 +2,6 @@ import $axios from "axios";
 import { usersCollection } from "../../plugins/firebase";
 import { ethers, Signer } from "ethers";
 
-fetch(
-  "https://raw.githubusercontent.com/dfy-asia/default-token-list/main/build/dfy.tokenlist.json"
-);
-
 export default {
   state: {
     me: null,
