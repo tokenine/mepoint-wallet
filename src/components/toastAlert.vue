@@ -13,7 +13,7 @@
           <v-icon large color="success"> monetization_on </v-icon>
         </v-col>
         <v-col cols="10">
-          <div>ท่านได้รับการทำรายการใหม่</div>
+          <div>มีรายการโอนเข้า</div>
           <div>{{parseUtillETH(alert_toast.amount)}} {{alert_toast.tokenName}} ({{alert_toast.tokenSymbol}})</div>
         </v-col>
       </v-row>

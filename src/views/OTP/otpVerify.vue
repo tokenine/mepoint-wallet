@@ -195,7 +195,7 @@ export default {
         if (res.data.success) {
           this.$store.commit("SET_OTP", {
             ref: res.data.otp_ref,
-            phone: this.otpData.email,
+            email: this.otpData.email,
           });
         }
         this.timer = 30;
@@ -220,8 +220,7 @@ export default {
     async storeUserOnfireStore(email, password, uid) {
       try {
         const wallet = await this.$ethers.Wallet.createRandom();
-        let encypt = await wallet.encrypt(password);
-        let encyptString = encypt;
+        let encyptString = await wallet.encrypt(password);
 
         await usersCollection.add({
           email: email,
@@ -229,6 +228,14 @@ export default {
           wallet: encyptString,
         });
 
+        localStorage.setItem("encypt_string_mpv", encyptString);
+        localStorage.setItem("wallet_mpv", JSON.stringify(wallet));
+        await this.$store.commit("SET_ME", {
+          email: email,
+          uid: uid,
+          ethereumAddress: wallet.address,
+          privateKey: wallet.privateKey,
+        });
       } catch (err) {
         throw err;
       }
@@ -250,6 +257,7 @@ export default {
       try {
         let querySnapshot = await usersCollection
           .where("email", "==", this.otpData.email)
+          .limit(1)
           .get();
         return querySnapshot.empty;
       } catch (err) {
@@ -264,15 +272,8 @@ export default {
           const password = pin;
           const email = this.otpData.email;
           await this.firebaseCreateUser(email, password);
-          let signIn = await firebaseAuth.signInWithEmailAndPassword(
-            email,
-            password
-          );
+          await firebaseAuth.signInWithEmailAndPassword(email, password);
           localStorage.setItem("email_account_mpv", this.otpData.email);
-          await this.$store.dispatch("getUser", {
-            uid: signIn.user.uid,
-            password: password,
-          });
           await this.$store.dispatch("getBalance");
           this.$router.push("/");
         } catch (err) {
