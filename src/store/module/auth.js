@@ -56,9 +56,7 @@ export default {
   },
   actions: {
     async getUser({ commit }, data) {
-      let querySnapshot = await usersCollection
-        .where("uid", "==", data.uid)
-        .get();
+      let querySnapshot = await usersCollection.where("uid", "==", data.uid).limit(1).get();
       let me = querySnapshot.docs[0].data();
       let wallet = await ethers.Wallet.fromEncryptedJson(
         me.wallet,

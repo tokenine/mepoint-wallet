@@ -15,6 +15,7 @@
               :rules="emailRules"
               label="E-mail"
               required
+              @keyup.enter="requestOTP()"
             ></v-text-field>
           </v-form>
         </div>
