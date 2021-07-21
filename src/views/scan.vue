@@ -31,16 +31,6 @@
         <v-btn color="#A0A0A0" class="mx-1" dark @click="upload" rounded large>
           Upload QR Code
         </v-btn>
-        <v-btn
-          color="#A0A0A0"
-          class="mx-1"
-          dark
-          @click="$router.push('/receive')"
-          rounded
-          large
-        >
-          QR Code ของฉัน
-        </v-btn>
       </v-col>
     </v-row>
   </div>

@@ -52,8 +52,7 @@
                       :rules="[
                         (v) => !!v || 'กรุณากรอกข้อมูล',
                         (v) => parseFloat(v) > 0 || 'จำนวนต้องมากกว่า 0',
-                        (v) =>
-                          parseFloat(v) <= parseFloat(tokenByName.balance) ||
+                        (v) => parseFloat(v) <= parseFloat(parseUtillETH(tokenByName.balance)) ||
                           'จำนวนไม่ถูกต้อง',
                       ]"
                       label="จำนวน"
