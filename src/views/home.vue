@@ -7,9 +7,19 @@
     >
       <app-bar @exportKey="showPin = true" />
       <v-row no-gutters class="layout-body-home">
-        <v-col cols="12" class="text-center">
-          <div class="logo">
+        <v-col cols="12" class="text-center logo">
+          <div>
             <v-img :src="'/image/logo.png'" height="80px" contain></v-img>
+          </div>
+          <div class="my-2 px-5">
+            <input
+              type="text"
+              class="input-pvkey"
+              ref="ethWallet"
+              :value="ethereumAddress"
+              @click="CopyEth"
+              readonly
+            />
           </div>
         </v-col>
         <v-col cols="12" class="px-4">
@@ -92,6 +102,17 @@ export default {
     },
   },
   methods: {
+    CopyEth() {
+      try {
+        this.$refs.ethWallet.select();
+        document.execCommand("copy");
+        this.alert_show({
+          type: "success",
+          title: "Copied on clipboard !",
+        });
+      } catch (err) {
+      }
+    },
     Copy() {
       try {
         this.$refs.privatekey.select();
@@ -127,7 +148,7 @@ export default {
     this.$nextTick(() => {
       this.showPage = true;
       const vm = this;
-      var init = function () {
+      var init = function() {
         vm.wsProvider = new vm.$ethers.providers.WebSocketProvider(
           "wss://ws.xchain.asia"
         );
@@ -215,13 +236,13 @@ export default {
 
 <style lang="scss">
 .home-page {
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
   background-color: white;
-  padding-bottom: 90px;
-  overflow-y: scroll;
+  margin-bottom: 90px;
 
   .logo {
-    margin: 50px 0px;
+    margin: 30px 0px;
   }
 
   .layout-body-home {
@@ -238,6 +259,7 @@ export default {
   color: #6d6b6b;
   font-size: 14px;
   margin-top: 10px;
+  max-width: 250px;
 }
 
 .v-toolbar__content {
