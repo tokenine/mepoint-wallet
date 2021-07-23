@@ -27,9 +27,22 @@ const mixins = {
       let check = ethers.utils.formatEther(value).split(".");
       let decimal = check[1].length;
       if (check[1].length > 4) {
+        return parseFloat(ethers.utils.formatEther(value)).toFixed(4);
+      } else if (check[1].length < 4) {
+        if (parseInt(check[1]) <= 0) {
+          return parseFloat(ethers.utils.formatEther(value)).toFixed(0);
+        }
+        return parseFloat(ethers.utils.formatEther(value)).toFixed(decimal);
+      }
+    },
+    parseUtillETHtoShow(val) {
+      const value = ethers.BigNumber.from(String(val));
+      let check = ethers.utils.formatEther(value).split(".");
+      let decimal = check[1].length;
+      if (check[1].length > 4) {
         return this.formatMoney(ethers.utils.formatEther(value), 4);
       } else if (check[1].length < 4) {
-        if(parseInt(check[1]) <= 0) {
+        if (parseInt(check[1]) <= 0) {
           return this.formatMoney(ethers.utils.formatEther(value), 0);
         }
         return this.formatMoney(ethers.utils.formatEther(value), decimal);

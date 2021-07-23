@@ -14,7 +14,7 @@
         </v-col>
         <v-col cols="10">
           <div>มีรายการโอนเข้า</div>
-          <div>{{parseUtillETH(alert_toast.amount)}} {{alert_toast.tokenName}} ({{alert_toast.tokenSymbol}})</div>
+          <div>{{parseUtillETHtoShow(alert_toast.amount)}} {{alert_toast.tokenName}} ({{alert_toast.tokenSymbol}})</div>
         </v-col>
       </v-row>
       <v-row no-gutters>

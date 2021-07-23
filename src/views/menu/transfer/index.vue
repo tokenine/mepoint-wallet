@@ -15,7 +15,7 @@
                 <v-toolbar color="#c71e2b" dark>
                   <div>
                     Balance :
-                    {{ parseUtillETH(tokenByName.balance) }}
+                    {{ parseUtillETHtoShow(tokenByName.balance) }}
                   </div>
                   <v-spacer></v-spacer>
                   <div>
