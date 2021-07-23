@@ -1,5 +1,7 @@
 import store from "../store";
-import { ethers } from "ethers";
+import {
+  ethers
+} from "ethers";
 
 const mixins = {
   computed: {
@@ -23,10 +25,27 @@ const mixins = {
     parseUtillETH(val) {
       const value = ethers.BigNumber.from(String(val));
       let check = ethers.utils.formatEther(value).split(".");
-      if(check[1].length > 4) {
-        return this.formatMoney(ethers.utils.formatEther(value),4);
-      } else {
-        return this.formatMoney(ethers.utils.formatEther(value));
+      let decimal = check[1].length;
+      if (check[1].length > 4) {
+        return parseFloat(ethers.utils.formatEther(value)).toFixed(4);
+      } else if (check[1].length < 4) {
+        if (parseInt(check[1]) <= 0) {
+          return parseFloat(ethers.utils.formatEther(value)).toFixed(0);
+        }
+        return parseFloat(ethers.utils.formatEther(value)).toFixed(decimal);
+      }
+    },
+    parseUtillETHtoShow(val) {
+      const value = ethers.BigNumber.from(String(val));
+      let check = ethers.utils.formatEther(value).split(".");
+      let decimal = check[1].length;
+      if (check[1].length > 4) {
+        return this.formatMoney(ethers.utils.formatEther(value), 4);
+      } else if (check[1].length < 4) {
+        if (parseInt(check[1]) <= 0) {
+          return this.formatMoney(ethers.utils.formatEther(value), 0);
+        }
+        return this.formatMoney(ethers.utils.formatEther(value), decimal);
       }
     },
     app_loading(state) {
@@ -152,12 +171,12 @@ const mixins = {
           negativeSign +
           (j ? i.substr(0, j) + thousands : "") +
           i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) +
-          (decimalCount
-            ? decimal +
-              Math.abs(amount - i)
-                .toFixed(decimalCount)
-                .slice(2)
-            : "")
+          (decimalCount ?
+            decimal +
+            Math.abs(amount - i)
+            .toFixed(decimalCount)
+            .slice(2) :
+            "")
         );
       } catch (e) {
         console.log(e);

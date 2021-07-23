@@ -18,7 +18,7 @@
       <span
         class="d-block w-100 money text-xs-right"
         :class="{ wd: checkOut(from) }"
-        >{{ checkOut(from) ? "-" : "+" }} {{ parseUtillETH(value) }}</span
+        >{{ checkOut(from) ? "-" : "+" }} {{ parseUtillETHtoShow(value) }}</span
       >
       <span class="sk text-xs-right" :class="{ wd: checkOut(from) }">
         <span>{{ tokenSymbol }}</span>

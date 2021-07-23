@@ -8,7 +8,7 @@
       <v-img :src="logoURI" height="28px" width="36px" contain></v-img>
     </v-col>
     <v-col cols="3">{{ symbol }}</v-col>
-    <v-col cols="7" class="text-right">{{ parseUtillETH(balanceX) }}</v-col>
+    <v-col cols="7" class="text-right">{{ parseUtillETHtoShow(balanceX) }}</v-col>
   </v-row>
 </template>
 
