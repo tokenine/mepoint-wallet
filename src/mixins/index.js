@@ -22,7 +22,12 @@ const mixins = {
   methods: {
     parseUtillETH(val) {
       const value = ethers.BigNumber.from(String(val));
-      return ethers.utils.formatEther(value);
+      let check = ethers.utils.formatEther(value).split(".");
+      if(check[1].length > 4) {
+        return this.formatMoney(ethers.utils.formatEther(value),4);
+      } else {
+        return this.formatMoney(ethers.utils.formatEther(value));
+      }
     },
     app_loading(state) {
       store.commit("SET_APP_LOADING", state);
@@ -158,6 +163,10 @@ const mixins = {
         console.log(e);
       }
     },
+    checkDecimal(amount) {
+      let check = amount.substr(".");
+      console.log(check);
+    }
   },
 };
 
