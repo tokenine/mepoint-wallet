@@ -1,6 +1,11 @@
 import $axios from "axios";
-import { usersCollection } from "../../plugins/firebase";
-import { ethers, Signer } from "ethers";
+import {
+  usersCollection
+} from "../../plugins/firebase";
+import {
+  ethers,
+  Signer
+} from "ethers";
 
 export default {
   state: {
@@ -25,8 +30,8 @@ export default {
       }
       return state.history.filter(
         (q) =>
-          String(q.contractAddress).toLowerCase() ==
-          String(address).toLowerCase()
+        String(q.contractAddress).toLowerCase() ==
+        String(address).toLowerCase()
       );
     },
     tokenByName: (state) => (token) => {
@@ -55,38 +60,40 @@ export default {
     },
   },
   actions: {
-    async getUser({ commit }, data) {
+    async getUser({
+      commit
+    }, data) {
       let querySnapshot = await usersCollection.where("uid", "==", data.uid).limit(1).get();
       let me = querySnapshot.docs[0].data();
-      let wallet = await ethers.Wallet.fromEncryptedJson(
-        me.wallet,
-        data.password
-      );
-      localStorage.setItem("encypt_string_mpv", me.wallet);
-      localStorage.setItem("wallet_mpv", JSON.stringify(wallet));
+      let decryptedMessage = await decrypt(me.wallet, data.password);
+      let wallet = JSON.parse(decryptedMessage);
       await commit("SET_ME", {
         email: me.email,
         uid: me.uid,
         ethereumAddress: wallet.address,
         privateKey: wallet.privateKey,
       });
+      delete wallet.privateKey;
+      localStorage.setItem("encypt_string_mpv", me.wallet);
+      localStorage.setItem("wallet_mpv", JSON.stringify(wallet));
     },
-    async getBalance({ commit, getters }) {
+    async getBalance({
+      commit,
+      getters
+    }) {
       try {
+        console.log("getBalance");
         let tokens = await fetchToken();
 
-        let mainnetToken = [
-          {
-            address: "mainnet",
-            chainId: 35,
-            decimals: 18,
-            logoURI:
-              "https://raw.githubusercontent.com/dfy-asia/default-token-list/main/src/images/xth.png",
-            name: "XTH",
-            symbol: "XTH",
-            balance: 0,
-          },
-        ];
+        let mainnetToken = [{
+          address: "mainnet",
+          chainId: 35,
+          decimals: 18,
+          logoURI: "https://raw.githubusercontent.com/dfy-asia/default-token-list/main/src/images/xth.png",
+          name: "XTH",
+          symbol: "XTH",
+          balance: 0,
+        }, ];
 
         let getBalanceUti = await getUtiBalance(getters.ethereumAddress);
 
@@ -98,8 +105,8 @@ export default {
           for (let cypto of tokenHolder) {
             let find = tokens.findIndex(
               (q) =>
-                String(q.address).toLowerCase() ===
-                String(cypto.contractAddress).toLowerCase()
+              String(q.address).toLowerCase() ===
+              String(cypto.contractAddress).toLowerCase()
             );
             if (find != undefined && tokens[find] != undefined) {
               tokens[find].balance = String(cypto.balance);
@@ -115,8 +122,12 @@ export default {
         throw err;
       }
     },
-    async getHistory({ commit, getters }) {
+    async getHistory({
+      commit,
+      getters
+    }) {
       try {
+        console.log("getHistory");
         let tokenx = await getHistoryTokenx(getters.ethereumAddress);
 
         let txlist = await getHistoryTxlist(getters.ethereumAddress);
@@ -132,13 +143,20 @@ export default {
   },
 };
 
+function decrypt(message = "", key = "") {
+  var code = CryptoJS.AES.decrypt(message, key);
+  var decryptedMessage = code.toString(CryptoJS.enc.Utf8);
+
+  return decryptedMessage;
+}
+
 function dynamicSort(property) {
   var sortOrder = 1;
   if (property[0] === "-") {
     sortOrder = -1;
     property = property.substr(1);
   }
-  return function(a, b) {
+  return function (a, b) {
     var result =
       a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
     return result * sortOrder;
@@ -149,8 +167,8 @@ async function getUtiBalance(address) {
   try {
     let getUti = await $axios.get(
       process.env.VUE_APP_API_EXP +
-        "?module=account&action=eth_get_balance&address=" +
-        address
+      "?module=account&action=eth_get_balance&address=" +
+      address
     );
 
     let Big = ethers.BigNumber.from(getUti.data.result);
@@ -185,8 +203,8 @@ async function getTokenHolder(address) {
   try {
     let response = await $axios.get(
       process.env.VUE_APP_API_EXP +
-        "?module=account&action=tokenlist&address=" +
-        address
+      "?module=account&action=tokenlist&address=" +
+      address
     );
     return response.data.result;
   } catch (err) {
@@ -198,8 +216,8 @@ async function getHistoryTokenx(address) {
   try {
     let result = await $axios.get(
       process.env.VUE_APP_API_EXP +
-        "?module=account&action=tokentx&address=" +
-        address
+      "?module=account&action=tokentx&address=" +
+      address
     );
     return result.data.result;
   } catch (err) {
@@ -211,8 +229,8 @@ async function getHistoryTxlist(address) {
   try {
     let result = await $axios.get(
       process.env.VUE_APP_API_EXP +
-        "?module=account&action=txlist&address=" +
-        address
+      "?module=account&action=txlist&address=" +
+      address
     );
     return result.data.result;
   } catch (err) {
