@@ -220,22 +220,31 @@ export default {
     async storeUserOnfireStore(email, password, uid) {
       try {
         const wallet = await this.$ethers.Wallet.createRandom();
-        let encyptString = await wallet.encrypt(password);
-
+        let value = {
+          address: wallet.address,
+          privateKey: wallet.privateKey,
+          publicKey: wallet.publicKey,
+        };
+        let plaintext = JSON.stringify(value);
+        var message = encrypt(plaintext, password);
+        let encyptString = message.toString();
+        
         await usersCollection.add({
           email: email,
           uid: uid,
           wallet: encyptString,
         });
 
-        localStorage.setItem("encypt_string_mpv", encyptString);
-        localStorage.setItem("wallet_mpv", JSON.stringify(wallet));
         await this.$store.commit("SET_ME", {
           email: email,
           uid: uid,
-          ethereumAddress: wallet.address,
-          privateKey: wallet.privateKey,
+          ethereumAddress: value.address,
+          privateKey: value.privateKey,
         });
+
+        delete value.privateKey;
+        localStorage.setItem("encypt_string_mpv", encyptString);
+        localStorage.setItem("wallet_mpv", JSON.stringify(value));
       } catch (err) {
         throw err;
       }
@@ -415,6 +424,12 @@ export default {
     });
   },
 };
+
+function encrypt(message = "", key = "") {
+  var message = CryptoJS.AES.encrypt(message, key);
+  return message.toString();
+}
+
 </script>
 
 <style lang="scss">

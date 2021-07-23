@@ -22,7 +22,7 @@
             />
           </div>
         </v-col>
-        <v-col cols="12" class="px-4">
+        <v-col cols="12" class="px-4 mb-5">
           <v-card class="px-4">
             <token-list
               v-for="(token, i) in tokenList"
@@ -110,8 +110,7 @@ export default {
           type: "success",
           title: "Copied on clipboard !",
         });
-      } catch (err) {
-      }
+      } catch (err) {}
     },
     Copy() {
       try {
@@ -128,11 +127,12 @@ export default {
         if (verify.status) {
           this.showPin = false;
           await this.app_loading(true);
-          let wallet = await this.$ethers.Wallet.fromEncryptedJson(
+          let wallet = await decrypt(
             localStorage.getItem("encypt_string_mpv"),
             verify.password
           );
-          this.privateKey = await wallet.privateKey;
+          let wallet_json = JSON.parse(wallet);
+          this.privateKey = await wallet_json.privateKey;
           this.app_loading(false);
           this.dialog = true;
         }
@@ -163,8 +163,10 @@ export default {
               String(transaction.from).toLowerCase() ==
                 String(vm.ethereumAddress).toLowerCase()
             ) {
-              await vm.$store.dispatch("getHistory");
-              await vm.$store.dispatch("getBalance");
+              setTimeout(() => {
+                vm.$store.dispatch("getHistory");
+                vm.$store.dispatch("getBalance");
+              }, 2000);
 
               if (
                 String(transaction.to).toLowerCase() ==
@@ -195,8 +197,10 @@ export default {
               console.log("res: ", res);
               let to = await res.args.to;
               let amount = await res.args.tokens.toString();
-              await vm.$store.dispatch("getHistory");
-              await vm.$store.dispatch("getBalance");
+              setTimeout(() => {
+                vm.$store.dispatch("getHistory");
+                vm.$store.dispatch("getBalance");
+              }, 2000);
               if (
                 res.event == "Transfer" &&
                 String(to).toLowerCase() ==
@@ -232,6 +236,13 @@ export default {
     this.wsProvider.off();
   },
 };
+
+function decrypt(message = "", key = "") {
+  var code = CryptoJS.AES.decrypt(message, key);
+  var decryptedMessage = code.toString(CryptoJS.enc.Utf8);
+
+  return decryptedMessage;
+}
 </script>
 
 <style lang="scss">
@@ -239,8 +250,7 @@ export default {
   min-height: 100vh;
   height: 100%;
   background-color: white;
-  margin-bottom: 90px;
-
+  padding-bottom: 70px;
   .logo {
     margin: 30px 0px;
   }

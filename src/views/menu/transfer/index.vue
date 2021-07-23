@@ -52,7 +52,9 @@
                       :rules="[
                         (v) => !!v || 'กรุณากรอกข้อมูล',
                         (v) => parseFloat(v) > 0 || 'จำนวนต้องมากกว่า 0',
-                        (v) => parseFloat(v) <= parseFloat(parseUtillETH(tokenByName.balance)) ||
+                        (v) =>
+                          parseFloat(v) <=
+                            parseFloat(parseUtillETH(tokenByName.balance)) ||
                           'จำนวนไม่ถูกต้อง',
                       ]"
                       label="จำนวน"
@@ -173,11 +175,12 @@ export default {
         this.showPin = false;
         try {
           await this.app_loading(true);
-          let wallet = await this.$ethers.Wallet.fromEncryptedJson(
+          let wallet = await decrypt(
             localStorage.getItem("encypt_string_mpv"),
             verify.password
           );
-          let privateKey = await wallet.privateKey;
+          let wallet_json = JSON.parse(wallet);
+          let privateKey = await wallet_json.privateKey;
           const provider = await new this.$ethers.providers.JsonRpcProvider(
             "https://rpc.tbwg.io"
           );
@@ -266,6 +269,8 @@ export default {
       this.$cookies.set("pin_mpv", pin, "15min");
     },
     async transferSuccess() {
+      // await this.$store.dispatch("getHistory");
+      // await this.$store.dispatch("getBalance");
       await this.app_loading(false);
       this.reset();
       await this.alert_show({
@@ -293,7 +298,7 @@ export default {
     }
     this.$nextTick(() => {
       const vm = this;
-      var init = function () {
+      var init = function() {
         vm.wsProvider = new vm.$ethers.providers.WebSocketProvider(
           "wss://ws.xchain.asia"
         );
@@ -305,10 +310,13 @@ export default {
             vm.wsProvider
           );
           vm.contract.on("*", async (res) => {
+            console.log(res);
             let to = await res.args.to;
             let amount = await res.args.tokens.toString();
-            await vm.$store.dispatch("getHistory");
-            await vm.$store.dispatch("getBalance");
+            setTimeout(() => {
+              vm.$store.dispatch("getHistory");
+              vm.$store.dispatch("getBalance");
+            }, 2000);
             if (
               res.event == "Transfer" &&
               String(to).toLowerCase() ==
@@ -332,8 +340,11 @@ export default {
                 String(transaction.from).toLowerCase() ==
                   String(vm.ethereumAddress).toLowerCase()
               ) {
-                await vm.$store.dispatch("getHistory");
-                await vm.$store.dispatch("getBalance");
+                
+                setTimeout(() => {
+                  vm.$store.dispatch("getHistory");
+                  vm.$store.dispatch("getBalance");
+                }, 2000);
 
                 if (
                   String(transaction.to).toLowerCase() ==
@@ -377,6 +388,13 @@ export default {
     this.wsProvider.off();
   },
 };
+
+function decrypt(message = "", key = "") {
+  var code = CryptoJS.AES.decrypt(message, key);
+  var decryptedMessage = code.toString(CryptoJS.enc.Utf8);
+
+  return decryptedMessage;
+}
 </script>
 
 <style lang="scss">
