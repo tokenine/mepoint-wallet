@@ -99,6 +99,24 @@ const routes = [
       middleware: [isSplash],
     },
   },
+  {
+    path: "/payment",
+    name: "Payment",
+    component: () => import("../views/menu/payment"),
+    meta: {
+      middleware: [isSplash],
+    },
+  },
+  {
+    path: "/sign-payment",
+    name: "SignPayment",
+    component: () => import("../views/SignPayment"),
+  },
+  {
+    path: "/activity",
+    name: "Activity",
+    component: () => import("../views/Activity"),
+  },
 ];
 
 export default routes;

@@ -93,15 +93,37 @@ export default {
       try {
         if (this.isJson(content)) {
           let json = JSON.parse(content);
-          if (json.type == "transfer") {
+          if (json.type === "transfer") {
             let to = json.to;
-            let contractAddress = json.contractAddress
+            let contractAddress = json.contractAddress;
             this.$router.push("/token/" + contractAddress + "?to=" + to);
+          } else if (json.type === "sign_payment") {
+            if (
+              json.payTo &&
+              json.orderId &&
+              json.amount &&
+              json.token &&
+              json.payContract
+            ) {
+              this.$router.push(
+                `/sign-payment/?params=${json.payTo},${json.orderId},${json.amount},${json.token},${json.payContract}`
+              );
+            } else {
+              throw "not app format";
+            }
           } else {
             throw "not app format";
           }
         } else {
-          throw "not JSON format";
+          const contractAddress = this.$route.query.tokenAddress;
+          if (!contractAddress) throw "not app format";
+          const addrs = content.split(":");
+          const to = addrs[addrs.length - 1];
+          if (ethers.utils.isAddress(to)) {
+            this.$router.push("/token/" + contractAddress + "?to=" + to);
+          } else {
+            throw "not app format";
+          }
         }
       } catch (err) {
         throw err;
@@ -123,17 +145,14 @@ export default {
 .qr-page {
   height: 100vh;
   background-color: #484848;
-
   .row {
     height: 100%;
     padding: 24px 8px;
   }
-
   .qrcode-stream-wrapper {
     display: flex;
     justify-content: center;
   }
-
   .qrcode-stream-camera {
     border-radius: 16px;
     max-width: 400px;
@@ -141,7 +160,6 @@ export default {
     height: 90vw;
     width: 90vw;
   }
-
   .qrupload {
     display: none;
   }

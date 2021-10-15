@@ -36,8 +36,8 @@
           </v-card>
         </v-col>
       </v-row>
-      <bottom-nav />
     </vue-pull-refresh>
+    <bottom-nav />
     <v-dialog max-width="350" v-model="dialog">
       <v-card height="180px" class="px-4">
         <v-row no-gutters justify="center" align="center" class="h-100">
