@@ -97,7 +97,7 @@ export default {
 .v-progress-linear__background {
   padding: 0px;
   opacity: 1 !important;
-  background: rgb(199, 30, 43);
+  background: rgb(199, 30, 44);
   background: linear-gradient(
     90deg,
     rgba(199, 30, 43, 1) 0%,
