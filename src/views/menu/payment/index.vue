@@ -334,8 +334,8 @@ export default {
 
 <style lang="scss">
 .payment-page {
-  min-height: 100vh;
-  height: 100%;
+  min-height: 1vh;
+  // height: 100%;
   background-color: white;
   padding: 24px 8px 70px 8px;
 
