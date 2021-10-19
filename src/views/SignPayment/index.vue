@@ -169,6 +169,14 @@ export default {
   },
   async mounted() {
     try {
+      const email = localStorage.getItem("email_account_mpv");
+      if (email === null) {
+        this.alert_show({
+          type: "errordontlogin",
+          title: "กรุณาเข้าสู่ระบบก่อนทำรายการ",
+          header: "ล้มเหลว !",
+        });
+      }
       this.provider = new ethers.providers.JsonRpcProvider(
         "https://rpc.tbwg.io"
       );
