@@ -1,5 +1,17 @@
 <template>
   <v-app app>
+    <transition name="fade">
+      <div class="banner" v-if="deferredPrompt">
+        <v-banner color="#c71e2b" dark class="text-left">
+          Get this app into your screen !.
+          <template v-slot:actions>
+            <v-btn text @click="dismiss">Dismiss</v-btn>
+            <v-btn text @click="install">Install</v-btn>
+          </template>
+        </v-banner>
+      </div>
+    </transition>
+
     <v-main app>
       <transition name="page" mode="out-in">
         <router-view />
@@ -26,6 +38,36 @@ export default {
     loading: loading,
     alert,
     ToastAlert,
+  },
+  data() {
+    return {
+      deferredPrompt: null,
+    };
+  },
+  created() {
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      let prompt = this.$cookies.get("prompt_mpv");
+      if (prompt != "shown") {
+        this.$cookies.set("prompt_mpv", "shown", 60 * 60 * 24 * 30);
+        this.deferredPrompt = e;
+        setTimeout(() => {
+          this.deferredPrompt = null;
+        }, 5000);
+      }
+    });
+    window.addEventListener("appinstalled", () => {
+      this.deferredPrompt = null;
+    });
+  },
+  methods: {
+    async dismiss() {
+      this.deferredPrompt = null;
+    },
+    async install() {
+      this.deferredPrompt.prompt();
+    },
   },
   beforeMount() {
     let vh = window.innerHeight * 0.01;
@@ -55,7 +97,7 @@ export default {
 .v-progress-linear__background {
   padding: 0px;
   opacity: 1 !important;
-  background: rgb(199, 30, 43);
+  background: rgb(199, 30, 44);
   background: linear-gradient(
     90deg,
     rgba(199, 30, 43, 1) 0%,
@@ -64,5 +106,11 @@ export default {
   ) !important;
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
+}
+
+.banner {
+  position: fixed;
+  top: 0px;
+  z-index: 100000;
 }
 </style>

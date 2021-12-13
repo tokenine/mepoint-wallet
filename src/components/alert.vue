@@ -9,6 +9,7 @@
                     <v-col cols="12" class="my-2" v-if="dialogData.type != 'notice'">
                         <v-img v-if="dialogData.type == 'success'" src="/image/checked.png" height="80px" contain></v-img>
                         <v-img v-if="dialogData.type == 'error'" src="/image/error.png" height="80px" contain></v-img>
+                        <v-img v-if="dialogData.type == 'errordontlogin'" src="/image/error.png" height="80px" contain></v-img>
                         <v-img v-if="dialogData.type == 'confirm'" src="/image/complain.png" height="80px" contain></v-img>
                     </v-col>
                     <v-col cols="12">
@@ -18,6 +19,8 @@
                         <v-btn rounded large color="success" block @click="done(true)" v-if="dialogData.type == 'success'">ตกลง
                         </v-btn>
                         <v-btn rounded large color="error" block @click="done(true)" v-if="dialogData.type == 'error'">ตกลง
+                        </v-btn>
+                        <v-btn rounded large color="error" block @click="backToHome(true)" v-if="dialogData.type == 'errordontlogin'">ตกลง
                         </v-btn>
                         <v-btn rounded large color="info" block @click="done(true)" v-if="dialogData.type == 'notice'">ตกลง
                         </v-btn>
@@ -53,7 +56,16 @@
             done(val) {
                 this.$store.state.app.alert_resolve(val);
                 this.alert_close();
+            },
+            backToHome(val) {
+                this.$store.state.app.alert_resolve(val);
+                this.alert_close();
+            try {
+                 this.$router.push("/splashScreen");
+            } catch (err) {
+                console.error(err);
             }
+    },
         }
     }
 </script>

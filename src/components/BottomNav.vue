@@ -1,12 +1,13 @@
 <template>
   <div class="bottom-bar">
-    <router-link to="/" class="pr-5">
+    <router-link to="/">
       <v-icon color="#EAEAEA" size="28"> account_balance_wallet </v-icon>
     </router-link>
-    <router-link to="/scan" class="scan">
-      <v-icon color="#EAEAEA" size="28"> qr_code </v-icon>
+    <router-link to="/payment">
+      <!-- <v-icon color="#EAEAEA" size="28"> qr_code </v-icon> -->
+      <v-img class="mx-auto" :src="pathBuyIcon" height="28px" width="28px" contain></v-img>
     </router-link>
-    <router-link to="/dapp" class="pl-5">
+    <router-link to="/dapp">
       <v-icon color="#EAEAEA" size="28"> touch_app </v-icon>
     </router-link>
   </div>
@@ -15,6 +16,18 @@
 <script>
 export default {
   name: "bottomNav",
+  computed: {
+    routeName() {
+      return this.$route.name
+    },
+    pathBuyIcon() {
+      if(this.routeName == "Payment") {
+        return "/image/buyicon.png"
+      } else {
+        return "/image/buyiconactive.png"
+      }
+    }
+  },
   data() {
     return {};
   },
@@ -35,6 +48,7 @@ export default {
   height: 50px;
   box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%),
     0 1px 10px 0 rgb(0 0 0 / 12%);
+  padding: 0px 10px;
 
   a {
     flex-grow: 1;
@@ -56,6 +70,7 @@ export default {
   .scan {
     display: flex;
     justify-content: center;
+    align-items: center;
     background-color: #c71e2b;
     border-radius: 60px;
     height: 60px;

@@ -33,7 +33,7 @@
   position: fixed;
   top: 0px;
   left: 0px;
-  z-index: 4;
+  z-index: 6;
 }
   .box-loading {
     position: absolute;

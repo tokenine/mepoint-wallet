@@ -84,6 +84,11 @@ export default {
       try {
         console.log("getBalance");
         let tokens = await fetchToken();
+        for (let i in tokens) {
+          tokens[i] = Object.assign(tokens[i], {
+            price: 3
+          });
+        }
 
         let mainnetToken = [{
           address: "mainnet",
@@ -93,6 +98,7 @@ export default {
           name: "XTH",
           symbol: "XTH",
           balance: 0,
+          price: 10
         }, ];
 
         let getBalanceUti = await getUtiBalance(getters.ethereumAddress);

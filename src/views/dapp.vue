@@ -31,10 +31,9 @@ export default {
 
 <style lang="scss">
 .dapp-page {
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
   background-color: white;
   padding-bottom: 50px;
-  overflow-y: scroll;
-
 }
 </style>

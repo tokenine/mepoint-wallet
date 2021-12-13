@@ -9,7 +9,7 @@
           <h2 v-html="header"></h2>
         </span>
         <v-spacer> </v-spacer>
-        <v-btn text large @click="$emit('receive')" class="text-center">
+        <v-btn v-if="receive" text large @click="$emit('receive')" class="text-center">
           <div>
             <v-icon>play_for_work</v-icon>
             <div style="font-size:12px;">รับเหรียญ</div>

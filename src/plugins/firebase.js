@@ -19,4 +19,5 @@ const firebaseStore = firebaseApp.firestore();
 
 export const firebaseAuth = firebaseApp.auth();
 export const usersCollection = firebaseStore.collection('users');
+export const paymentsCollection = firebaseStore.collection('payments');
 
