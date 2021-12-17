@@ -90,7 +90,7 @@ export default {
           this.alert_show({
             header: "ล้มเหลว",
             type: "error",
-            title: "E-mail ม่ถูกต้อง <br> กรุณาลองใหม่อีกครั้ง !",
+            title: "E-mail ไม่ถูกต้อง <br> กรุณาลองใหม่อีกครั้ง !",
           });
         }
         this.timer = 30;

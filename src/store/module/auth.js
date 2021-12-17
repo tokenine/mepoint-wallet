@@ -108,9 +108,19 @@ export default {
           },
         ];
 
-        let getBalanceUti = await getUtiBalance(getters.ethereumAddress);
+        for (let i in mainnetToken) {
+          if (mainnetToken[i].address !== "mainnet") {
+            let tokenBalance = await getTokenBalance(
+              mainnetToken[i].address,
+              getters.ethereumAddress
+            );
+            mainnetToken[i].balance = tokenBalance;
+          } else {
+            let getBalanceUti = await getUtiBalance(getters.ethereumAddress);
 
-        mainnetToken[0].balance = getBalanceUti;
+            mainnetToken[0].balance = getBalanceUti;
+          }
+        }
 
         let tokenHolder = await getTokenHolder(getters.ethereumAddress);
 
@@ -178,6 +188,24 @@ async function getUtiBalance(address) {
     let getUti = await $axios.get(
       process.env.VUE_APP_API_EXP +
         "?module=account&action=eth_get_balance&address=" +
+        address
+    );
+
+    let Big = ethers.BigNumber.from(getUti.data.result);
+
+    return Big.toString();
+  } catch (err) {
+    return "0";
+  }
+}
+
+async function getTokenBalance(tokenaddress, address) {
+  try {
+    let getUti = await $axios.get(
+      process.env.VUE_APP_API_EXP +
+        "?module=account&action=tokenbalance&contractaddress=" +
+        tokenaddress +
+        "&address=" +
         address
     );
 
